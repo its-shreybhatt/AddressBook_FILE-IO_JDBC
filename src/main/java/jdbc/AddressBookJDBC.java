@@ -1,5 +1,6 @@
 package jdbc;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,7 +10,7 @@ import java.util.Scanner;
 import static Constants.Constants.*;
 
 public class AddressBookJDBC {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
 
         Connection connection = DriverManager.getConnection(OS.url, OS.user, OS.password);
         Statement statement = connection.createStatement();
@@ -21,9 +22,9 @@ public class AddressBookJDBC {
         System.out.println("Queries executed successfully....");
 
         int choice = 0;
-        while (choice != 6) {
+        while (choice != 7) {
             System.out.println("What do you want to Perform");
-            System.out.print("1.Create/Insert, 2.Read/Count, 3.Update, 4.Delete, 5.Search, 6.Stop  - ");
+            System.out.print("1.Create/Insert, 2.Read/Count, 3.Update, 4.Delete, 5.Search, 6. Insert from JSON, 7.Stop  - ");
             choice = input.nextInt();
             try {
                 switch (choice) {
@@ -41,6 +42,9 @@ public class AddressBookJDBC {
                         break;
                     case TO_SEARCH_CONTACT_JDBC:
                         crudOperations.toSearch(statement);
+                        break;
+                    case TO_INSERT_FROM_JSON_JDBC:
+                        crudOperations.toInsertFromJSON(connection);
                         break;
                     case TO_STOP_JDBC:
                         queryObject.toDelete(statement);

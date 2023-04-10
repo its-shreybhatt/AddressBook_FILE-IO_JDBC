@@ -1,9 +1,15 @@
 package jdbc;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -253,5 +259,61 @@ public class CRUDOperations {
                 }
                 break;
         }
+    }
+
+    public void toInsertFromJSON(Connection connection) throws SQLException, IOException {
+        String path = "C:\\Users\\USER\\IdeaProjects\\AddressBookUsingJDBC\\src\\main\\resources\\PersonData.json";
+        Path filepath = Paths.get(path);
+
+        Reader readerObject = Files.newBufferedReader(filepath);
+        Gson gson = new Gson();
+        AddressData[] objectJsonArray = gson.fromJson(readerObject, AddressData[].class);
+        List<AddressData> jsonList = Arrays.asList(objectJsonArray);
+
+        for (int i = 0; i < jsonList.size(); i++) {
+            String first_name = jsonList.get(i).first_name;
+            String last_name = jsonList.get(i).last_name;
+            String phone = jsonList.get(i).phone;
+            String email = jsonList.get(i).email;
+            String book_name = jsonList.get(i).book_name;
+            String city = jsonList.get(i).city;
+            String state = jsonList.get(i).state;
+            int zip = jsonList.get(i).zip;
+
+            String JSONToBookType = "INSERT INTO book_type (book_name) VALUE (?) ;";
+            String JSONToDBAddress = "INSERT INTO address_details (city,state,zip) VALUES (?,?,?) ;";
+            String JSONToDBContact = "INSERT INTO person_details (first_name,last_name,phone,email,book_s_numb,address_numb) VALUES (?,?,?,?,?,?) ";
+            PreparedStatement statementBookTable = connection.prepareStatement(JSONToBookType);
+            PreparedStatement statementAddressTable = connection.prepareStatement(JSONToDBAddress);
+            PreparedStatement statementContactTable = connection.prepareStatement(JSONToDBContact);
+
+            statementBookTable.setString(1, book_name);
+            statementBookTable.execute();
+
+            String compareBook = String.format("SELECT book_s_numb FROM book_type WHERE book_name = '%s';", book_name);
+            ResultSet result = statementAddressTable.executeQuery(compareBook);
+            result.next();
+            int book_s_numb = (result.getInt("book_s_numb"));
+
+            statementAddressTable.setString(1, city);
+            statementAddressTable.setString(2, state);
+            statementAddressTable.setInt(3, zip);
+            statementAddressTable.execute();
+
+            String check = String.format("SELECT address_numb FROM address_details WHERE city = '%s';", city);
+            ResultSet resultTwo = statementAddressTable.executeQuery(check);
+            resultTwo.next();
+            int address_numb = (resultTwo.getInt("address_numb"));
+
+            statementContactTable.setString(1, first_name);
+            statementContactTable.setString(2, last_name);
+            statementContactTable.setString(3, phone);
+            statementContactTable.setString(4, email);
+            statementContactTable.setInt(5, book_s_numb);
+            statementContactTable.setInt(6, address_numb);
+            statementContactTable.execute();
+
+        }
+        System.out.println("JSON Data has been inserted successfully");
     }
 }
