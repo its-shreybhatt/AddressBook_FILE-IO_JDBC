@@ -28,6 +28,62 @@ public class CRUDOperations {
         }
     }
 
+    public void toInsertFromConsole(Statement stmt) throws SQLException {
+        printListOfBooks(stmt);
+
+        System.out.print("Do you want to Add Book (YES/NO) - ");
+        String choiceForBook = input.next();
+        if (choiceForBook.equalsIgnoreCase("yes")) {
+            System.out.print("Enter the BookName - ");
+            String book_name = input.next();
+            String bookQuery = String.format("INSERT INTO book_type (book_name) " +
+                    "VALUES ('%s') ", book_name);
+            stmt.executeUpdate(bookQuery);
+        }
+        System.out.print("Enter S.Numb of Book you want to Use- ");
+        int book_s_numb = input.nextInt();
+
+        System.out.print("Enter the Firstname - ");
+        String first_name = input.next();
+        System.out.print("Enter the Lastname - ");
+        String last_name = input.next();
+        System.out.print("Enter the Phone Numb - ");
+        String phone = input.next();
+        System.out.print("Enter the email - ");
+        String email = input.next();
+
+        String printQuery = "SELECT address_numb,city,state,zip FROM address_details ;";
+        ResultSet resultSet = stmt.executeQuery(printQuery);
+        while (resultSet.next()) {
+            String address_numb = String.valueOf(resultSet.getInt("address_numb"));
+            String city = resultSet.getString("city");
+            String state = resultSet.getString("state");
+            String zip = String.valueOf(resultSet.getInt("zip"));
+            System.out.println(address_numb + "- " + city + ", " + state + ", " + zip);
+        }
+
+        System.out.print("Do you want to Add new Address (YES/NO) - ");
+        String choiceForAddress = input.next();
+        if (choiceForAddress.equalsIgnoreCase("yes")) {
+            System.out.print("Enter the city - ");
+            String city = input.next();
+            System.out.print("Enter the state - ");
+            String state = input.next();
+            System.out.print("Enter the zip - ");
+            int zip = input.nextInt();
+            String addressQuery = String.format("INSERT INTO address_details (city,state,zip) " +
+                    "VALUES ('%s','%s','%s') ", city, state, zip);
+            stmt.executeUpdate(addressQuery);
+        }
+        System.out.print("Enter S.Numb of Address you want to Use- ");
+        int address_numb = input.nextInt();
+
+
+        String insertQuery = String.format("INSERT INTO person_details (first_name,last_name,phone,email,book_s_numb,address_numb) " +
+                "VALUES ('%s','%s','%s','%s','%s','%s') ", first_name, last_name, phone, email, book_s_numb, address_numb);
+        stmt.executeUpdate(insertQuery);
+    }
+
     public void toUpdateData(Statement stmt) throws SQLException {
         printListOfBooks(stmt);
 
