@@ -1,0 +1,24 @@
+{
+  "Address Book Data ": [
+    {
+      "name": "Shrey",
+      "lastname": "Bhatt",
+      "address": "ln no.1",
+      "city": "ddn",
+      "state": "UK",
+      "zip": 123,
+      "phone": 456,
+      "email": "xyz@mail"
+    },
+    {
+      "name": "Kamal",
+      "lastname": "Kanti",
+      "address": "lane no.2",
+      "city": "Kanpur",
+      "state": "UP",
+      "zip": 111,
+      "phone": 999,
+      "email": "abc@yahoo"
+    }
+  ]
+}
