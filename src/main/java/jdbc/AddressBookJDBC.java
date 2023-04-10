@@ -23,7 +23,7 @@ public class AddressBookJDBC {
         int choice = 0;
         while (choice != 4) {
             System.out.println("What do you want to Perform");
-            System.out.print("1.Update, 2.Read/Count 3.Delete, 4.Stop - ");
+            System.out.print("1.Update, 2.Read/Count 3.Delete, 4.Stop ,5.Search - ");
             choice = input.nextInt();
             try {
                 switch (choice) {
@@ -39,6 +39,9 @@ public class AddressBookJDBC {
                         break;
                     case TO_STOP_JDBC:
                         queryObject.toDelete(statement);
+                        break;
+                    case TO_SEARCH_CONTACT_JDBC:
+                        crudOperations.toSearch(statement);
                         break;
                     default:
                         throw new CustomException("Invalid Input Please Try Again");

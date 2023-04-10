@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import static Constants.Constants.*;
+
 public class CRUDOperations {
 
     Scanner input = new Scanner(System.in);
@@ -135,6 +137,65 @@ public class CRUDOperations {
             System.out.println("Count of Contacts = " + listOfContacts.size());
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void toSearch(Statement stmt) throws SQLException {
+        System.out.print("How do you want to Search (1. By Book Name/ 2. By Person Name) - ");
+        int optionToSearch = input.nextInt();
+
+        switch (optionToSearch) {
+            case SEARCH_BY_BOOKNAME_JDBC:
+                printListOfBooks(stmt);
+
+                System.out.print("Enter the name of Book - ");
+                String bookNameToSearch = input.next();
+                String sqlStatement = String.format("SELECT book_name,first_name,last_name,phone,city,state,zip FROM person_details " +
+                        "JOIN book_type ON book_type.book_s_numb = person_details.book_s_numb " +
+                        "JOIN address_details ON person_details.address_numb = address_details.address_numb " +
+                        "WHERE book_name = '%s' ;", bookNameToSearch);
+                try {
+                    ResultSet resultSet = stmt.executeQuery(sqlStatement);
+                    while (resultSet.next()) {
+                        String book_name = resultSet.getString("book_name");
+                        String first_name = resultSet.getString("first_name");
+                        String last_name = resultSet.getString("last_name");
+                        String phone = resultSet.getString("phone");
+                        String city = resultSet.getString("city");
+                        String state = resultSet.getString("state");
+                        int zip = resultSet.getInt("zip");
+                        System.out.println(book_name + ", " + first_name + ", " + last_name + ", " + phone
+                                + ", " + city + ", " + state + ", " + zip);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case SEARCH_BY_PERSONNAME_JDBC:
+                System.out.print("Enter the name of Person - ");
+                String nameToSearch = input.next();
+                String statementTwo = String.format("SELECT book_name,first_name,last_name,phone,email,city,state,zip FROM person_details " +
+                        "JOIN book_type ON person_details.book_s_numb = book_type.book_s_numb " +
+                        "JOIN address_details ON person_details.address_numb = address_details.address_numb " +
+                        "WHERE first_name = '%s' ;", nameToSearch);
+                try {
+                    ResultSet setForName = stmt.executeQuery(statementTwo);
+                    while (setForName.next()) {
+                        String book_name = setForName.getString("book_name");
+                        String first_name = setForName.getString("first_name");
+                        String last_name = setForName.getString("last_name");
+                        String phone = setForName.getString("phone");
+                        String email = setForName.getString("email");
+                        String city = setForName.getString("city");
+                        String state = setForName.getString("state");
+                        int zip = setForName.getInt("zip");
+                        System.out.println(book_name + ", " + first_name + ", " + last_name + ", " + phone
+                                + ", " + email + ", " + city + ", " + state + ", " + zip);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
         }
     }
 }
