@@ -48,4 +48,18 @@ public class Constants {
     public static final int WRITE_JSON_FILE = 1;
     public static final int READ_JSON_FILE = 2;
     public static final int STOP_JSON_FILE = 3;
+
+
+    // JDBC
+    public static final int TO_INSERT_CONTACT_JDBC = 1;
+    public static final int TO_PRINT_CONTACT_JDBC = 2;
+    public static final int TO_UPDATE_CONTACT_JDBC = 3;
+    public static final int TO_DELETE_CONTACT_JDBC= 4;
+    public static final int TO_SEARCH_CONTACT_JDBC= 5;
+    public static final int TO_INSERT_FROM_CSV_JDBC = 6;
+    public static final int TO_INSERT_FROM_JSON_JDBC= 7;
+    public static final int TO_STOP_JDBC = 8;
+
+    public static final int SEARCH_BY_BOOKNAME_JDBC = 1;
+    public static final int SEARCH_BY_PERSONNAME_JDBC = 2;
 }
