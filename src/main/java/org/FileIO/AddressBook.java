@@ -120,4 +120,5 @@ public class AddressBook {
                 + " " + contact.getCity() + " " + contact.getState() + " " + contact.getZip() + " " + contact.getPhone()
                 + " " + contact.getEmail()).forEach(System.out::println);
     }
+
 }

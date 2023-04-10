@@ -71,4 +71,5 @@ public class CSVClass {
         }
         return userInput;
     }
+
 }

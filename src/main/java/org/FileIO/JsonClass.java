@@ -20,6 +20,7 @@ public class JsonClass {
         while (inputOption != 3) {
             System.out.print("What do you want (1.Write , 2.Read , 3.Stop) - ");
             inputOption = mainBook.input.nextInt();
+
             switch (inputOption) {
                 case WRITE_JSON_FILE:
                     JSONObject contactDetails = new JSONObject();
