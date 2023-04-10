@@ -22,9 +22,11 @@ public class AddressBookJDBC {
         System.out.println("Queries executed successfully....");
 
         int choice = 0;
-        while (choice != 7) {
+        while (choice != 8) {
             System.out.println("What do you want to Perform");
-            System.out.print("1.Create/Insert, 2.Read/Count, 3.Update, 4.Delete, 5.Search, 6. Insert from JSON, 7.Stop  - ");
+            System.out.print("1. Create/Insert, 2. Read/Count, 3.Update, 4.Delete, 5.Search," +
+                    " 6. Insert from CSV, 7. Insert from JSON, 8.Stop - ");
+
             choice = input.nextInt();
             try {
                 switch (choice) {
@@ -43,13 +45,15 @@ public class AddressBookJDBC {
                     case TO_SEARCH_CONTACT_JDBC:
                         crudOperations.toSearch(statement);
                         break;
+                    case TO_INSERT_FROM_CSV_JDBC:
+                        crudOperations.toInsertFromCSV(connection);
+                        break;
                     case TO_INSERT_FROM_JSON_JDBC:
                         crudOperations.toInsertFromJSON(connection);
                         break;
                     case TO_STOP_JDBC:
                         queryObject.toDelete(statement);
                         break;
-
                     default:
                         throw new CustomException("Invalid Input Please Try Again");
                 }
@@ -58,6 +62,5 @@ public class AddressBookJDBC {
             }
         }
         connection.close();
-
     }
 }

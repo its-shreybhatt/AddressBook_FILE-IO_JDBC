@@ -2,6 +2,8 @@ package jdbc;
 
 import com.google.gson.Gson;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -19,6 +21,7 @@ import static Constants.Constants.*;
 public class CRUDOperations {
 
     Scanner input = new Scanner(System.in);
+
     public void printListOfBooks(Statement stmt) throws SQLException {
         String query = "SELECT book_name FROM book_type ;";
         List<String> listOfBooks = new ArrayList<>();
@@ -88,6 +91,34 @@ public class CRUDOperations {
         String insertQuery = String.format("INSERT INTO person_details (first_name,last_name,phone,email,book_s_numb,address_numb) " +
                 "VALUES ('%s','%s','%s','%s','%s','%s') ", first_name, last_name, phone, email, book_s_numb, address_numb);
         stmt.executeUpdate(insertQuery);
+    }
+
+    public void toCountData(Statement stmt) {
+        String printStatement = "SELECT book_name,first_name,last_name,phone,email,city,state,zip FROM person_details " +
+                "JOIN book_type ON person_details.book_s_numb = book_type.book_s_numb " +
+                "JOIN address_details ON person_details.address_numb = address_details.address_numb;";
+
+        List<AddressData> listOfContacts = new ArrayList<>();
+        try {
+            ResultSet result = stmt.executeQuery(printStatement);
+            while (result.next()) {
+                String book_name = result.getString("book_name");
+                String first_name = result.getString("first_name");
+                String last_name = result.getString("last_name");
+                String phone = result.getString("phone");
+                String email = result.getString("email");
+                String city = result.getString("city");
+                String state = result.getString("state");
+                int zip = result.getInt("zip");
+
+                listOfContacts.add(new AddressData(first_name, last_name, phone, email));
+                System.out.println(book_name + "-> " + first_name + ", " + last_name + ", " + phone
+                        + ", " + email + ", " + city + ", " + state + ", " + zip);
+            }
+            System.out.println("Count of Contacts = " + listOfContacts.size());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void toUpdateData(Statement stmt) throws SQLException {
@@ -174,34 +205,6 @@ public class CRUDOperations {
         }
     }
 
-    public void toCountData(Statement stmt) {
-        String printStatement = "SELECT book_name,first_name,last_name,phone,email,city,state,zip FROM person_details " +
-                "JOIN book_type ON person_details.book_s_numb = book_type.book_s_numb " +
-                "JOIN address_details ON person_details.address_numb = address_details.address_numb;";
-
-        List<AddressData> listOfContacts = new ArrayList<>();
-        try {
-            ResultSet result = stmt.executeQuery(printStatement);
-            while (result.next()) {
-                String book_name = result.getString("book_name");
-                String first_name = result.getString("first_name");
-                String last_name = result.getString("last_name");
-                String phone = result.getString("phone");
-                String email = result.getString("email");
-                String city = result.getString("city");
-                String state = result.getString("state");
-                int zip = result.getInt("zip");
-
-                listOfContacts.add(new AddressData(first_name, last_name, phone, email));
-                System.out.println(book_name + "-> " + first_name + ", " + last_name + ", " + phone
-                        + ", " + email + ", " + city + ", " + state + ", " + zip);
-            }
-            System.out.println("Count of Contacts = " + listOfContacts.size());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void toSearch(Statement stmt) throws SQLException {
         System.out.print("How do you want to Search (1. By Book Name/ 2. By Person Name) - ");
         int optionToSearch = input.nextInt();
@@ -259,6 +262,60 @@ public class CRUDOperations {
                 }
                 break;
         }
+    }
+
+    public void toInsertFromCSV(Connection connection) throws SQLException, IOException {
+        String filePath = "C:\\Users\\USER\\IdeaProjects\\AddressBookUsingJDBC\\src\\main\\resources\\data.csv";
+        String csvToBookType = "INSERT INTO book_type (book_name) VALUE (?) ;";
+        String csvToDBAddress = "INSERT INTO address_details (city,state,zip) VALUES (?,?,?) ;";
+        String csvToDBContact = "INSERT INTO person_details (first_name,last_name,phone,email,book_s_numb,address_numb) VALUES (?,?,?,?,?,?) ";
+        PreparedStatement statementBook = connection.prepareStatement(csvToBookType);
+        PreparedStatement statementAdd = connection.prepareStatement(csvToDBAddress);
+        PreparedStatement statementCont = connection.prepareStatement(csvToDBContact);
+
+        BufferedReader lineReader = new BufferedReader(new FileReader(filePath));
+        String lineText;
+        lineReader.readLine();    // to ignore header line
+        while ((lineText = lineReader.readLine()) != null) {
+            String[] dataArray = lineText.split(",");
+
+            String book_name = dataArray[5];
+            statementBook.setString(1, book_name);
+            statementBook.execute();
+
+            String compareBook = String.format("SELECT book_s_numb FROM book_type WHERE book_name = '%s';", book_name);
+            ResultSet result = statementAdd.executeQuery(compareBook);
+            result.next();
+            int book_s_numb = (result.getInt("book_s_numb"));
+
+            String city = dataArray[6];
+            String state = dataArray[7];
+            String zip = dataArray[8];
+            statementAdd.setString(1, city);
+            statementAdd.setString(2, state);
+            statementAdd.setInt(3, Integer.parseInt(zip));
+            statementAdd.execute();
+
+            String check = String.format("SELECT address_numb FROM address_details WHERE city = '%s';", city);
+            ResultSet resultTwo = statementAdd.executeQuery(check);
+            resultTwo.next();
+            int address_numb = (resultTwo.getInt("address_numb"));
+
+            String first_name = dataArray[1];
+            String last_name = dataArray[2];
+            String phone = dataArray[3];
+            String email = dataArray[4];
+            statementCont.setString(1, first_name);
+            statementCont.setString(2, last_name);
+            statementCont.setString(3, phone);
+            statementCont.setString(4, email);
+            statementCont.setInt(5, book_s_numb);
+            statementCont.setInt(6, address_numb);
+            statementCont.execute();
+
+        }
+        lineReader.close();
+        System.out.println("CSV Data has been inserted successfully");
     }
 
     public void toInsertFromJSON(Connection connection) throws SQLException, IOException {
