@@ -21,14 +21,18 @@ public class AddressBookJDBC {
         System.out.println("Queries executed successfully....");
 
         int choice = 0;
-        while (choice != 8) {
+        while (choice != 4) {
             System.out.println("What do you want to Perform");
-            System.out.print("1.Update, 2.Delete, 3.Stop - ");
+            System.out.print("1.Update, 2.Read/Count 3.Delete, 4.Stop - ");
             choice = input.nextInt();
             try {
                 switch (choice) {
+
                     case TO_UPDATE_CONTACT_JDBC:
                         crudOperations.toUpdateData(statement);
+                        break;
+                    case TO_PRINT_CONTACT_JDBC:
+                        crudOperations.toCountData(statement);
                         break;
                     case TO_DELETE_CONTACT_JDBC:
                         crudOperations.toDeleteData(statement);

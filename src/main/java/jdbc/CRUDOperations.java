@@ -109,4 +109,32 @@ public class CRUDOperations {
             throw new RuntimeException(e);
         }
     }
+
+    public void toCountData(Statement stmt) {
+        String printStatement = "SELECT book_name,first_name,last_name,phone,email,city,state,zip FROM person_details " +
+                "JOIN book_type ON person_details.book_s_numb = book_type.book_s_numb " +
+                "JOIN address_details ON person_details.address_numb = address_details.address_numb;";
+
+        List<AddressData> listOfContacts = new ArrayList<>();
+        try {
+            ResultSet result = stmt.executeQuery(printStatement);
+            while (result.next()) {
+                String book_name = result.getString("book_name");
+                String first_name = result.getString("first_name");
+                String last_name = result.getString("last_name");
+                String phone = result.getString("phone");
+                String email = result.getString("email");
+                String city = result.getString("city");
+                String state = result.getString("state");
+                int zip = result.getInt("zip");
+
+                listOfContacts.add(new AddressData(first_name, last_name, phone, email));
+                System.out.println(book_name + "-> " + first_name + ", " + last_name + ", " + phone
+                        + ", " + email + ", " + city + ", " + state + ", " + zip);
+            }
+            System.out.println("Count of Contacts = " + listOfContacts.size());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
